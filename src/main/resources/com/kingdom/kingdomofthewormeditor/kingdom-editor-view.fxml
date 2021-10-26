@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.*?>
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import javafx.scene.canvas.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.kingdom.kingdomofthewormeditor.KingdomEditorController">
+   <left>
+       <AnchorPane prefHeight="800.0" prefWidth="181.0" BorderPane.alignment="CENTER" />
+   </left>
+   <right>
+       <AnchorPane prefHeight="800" prefWidth="418.0" BorderPane.alignment="CENTER">
+          <children>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+               <children>
+                  <TreeView fx:id="componentTree" layoutX="42.0" layoutY="133.0" prefHeight="335.0" prefWidth="310.0" />
+               </children>
+            </AnchorPane>
+          </children>
+       </AnchorPane>
+   </right>
+   <top>
+      <VBox>
+         <children>
+             <MenuBar BorderPane.alignment="CENTER">
+                <menus>
+                    <Menu mnemonicParsing="false" text="File">
+                       <items>
+                           <MenuItem mnemonicParsing="false" text="Open" />
+                           <MenuItem mnemonicParsing="false" text="Close" />
+                       </items>
+                    </Menu>
+                    <Menu mnemonicParsing="false" text="Edit">
+                       <items>
+                           <MenuItem mnemonicParsing="false" text="Delete" />
+                       </items>
+                    </Menu>
+                    <Menu mnemonicParsing="false" text="Help">
+                       <items>
+                           <MenuItem mnemonicParsing="false" text="About" />
+                       </items>
+                    </Menu>
+                </menus>
+             </MenuBar>
+         </children>
+      </VBox>
+   </top>
+   <center>
+      <VBox prefHeight="800" prefWidth="800" style="-fx-border-width: 1; -fx-border-color: #000000;">
+         <children>
+            <TextField fx:id="tilePosition" prefHeight="51.0" prefWidth="309.0" />
+            <Separator prefWidth="200.0" />
+            <AnchorPane>
+               <children>
+                  <Canvas fx:id="sceneCanvas" layoutX="20" layoutY="20" nodeOrientation="INHERIT" onMouseClicked="#handleOnMouseClicked" onMouseEntered="#handleOnMouseOver" onMouseMoved="#handleOnMouseOver" BorderPane.alignment="CENTER">
+                     <cursor>
+                        <Cursor fx:constant="CROSSHAIR" />
+                     </cursor>
+                  </Canvas>
+               </children>
+            </AnchorPane>
+         </children>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+      </VBox>
+   </center>
+   <bottom>
+      <Pane>
+         <children>
+            <Label text="Kingdom of the Worm - Editor" />
+         </children>
+      </Pane>
+   </bottom>
+</BorderPane>
