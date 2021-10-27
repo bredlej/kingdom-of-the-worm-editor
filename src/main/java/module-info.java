@@ -4,7 +4,8 @@ module com.kingdom.kingdomofthewormeditor {
 
     opens com.kingdom.kingdomofthewormeditor to javafx.fxml;
     exports com.kingdom.kingdomofthewormeditor;
-    exports com.kingdom.kingdomofthewormeditor.views;
     exports com.kingdom.kingdomofthewormeditor.model;
     exports com.kingdom.kingdomofthewormeditor.model.components;
+    exports com.kingdom.kingdomofthewormeditor.views.api;
+    exports com.kingdom.kingdomofthewormeditor.views.impl;
 }
