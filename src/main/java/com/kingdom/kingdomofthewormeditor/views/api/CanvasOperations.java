@@ -1,10 +1,11 @@
 package com.kingdom.kingdomofthewormeditor.views.api;
 
-import javafx.scene.input.MouseEvent;
+import com.kingdom.kingdomofthewormeditor.model.Tile;
+import com.kingdom.kingdomofthewormeditor.model.TileProperties;
 
 public interface CanvasOperations {
 
-    void initialize();
-    void handleOnMouseClicked(MouseEvent mouseEvent);
-    void handleOnMouseOver(MouseEvent mouseEvent);
+    void render();
+    void addTile(int x, int y, TileProperties properties);
+    void removeTile(Tile tile);
 }
