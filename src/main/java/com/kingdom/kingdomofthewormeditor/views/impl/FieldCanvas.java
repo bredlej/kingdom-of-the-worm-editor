@@ -1,34 +1,40 @@
 package com.kingdom.kingdomofthewormeditor.views.impl;
 
 import com.kingdom.kingdomofthewormeditor.Config;
-import com.kingdom.kingdomofthewormeditor.MainController;
+import com.kingdom.kingdomofthewormeditor.util.CustomEventBus;
 import com.kingdom.kingdomofthewormeditor.model.Field;
 import com.kingdom.kingdomofthewormeditor.model.Tile;
 import com.kingdom.kingdomofthewormeditor.model.TileProperties;
 import com.kingdom.kingdomofthewormeditor.model.Vector2View;
 import com.kingdom.kingdomofthewormeditor.model.components.FloorComponent;
-import com.kingdom.kingdomofthewormeditor.views.api.CanvasOperations;
+import com.kingdom.kingdomofthewormeditor.views.events.TileEvent;
+import javafx.fxml.FXML;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 
-public class FieldCanvas implements CanvasOperations {
+public class FieldCanvas extends Canvas {
 
-    MainController controller;
+    private final Field field;
 
-    private final Field<Integer> field;
-
-    public FieldCanvas(MainController controller) {
-        this.field = new Field<>();
-        this.controller = controller;
+    public FieldCanvas() {
+        field = new Field();
     }
 
-    @Override
+    @FXML
     public void initialize() {
         redrawCanvas();
     }
 
-    @Override
+    @FXML
+    public void handleOnMouseOver(MouseEvent mouseEvent) {
+        redrawCanvas();
+        describeTileUnderCursor(mouseEvent);
+        paintCursor(mouseEvent);
+    }
+
+    @FXML
     public void handleOnMouseClicked(MouseEvent mouseEvent) {
         var fieldPosition = mouseToFieldPosition(mouseEvent.getX(), mouseEvent.getY());
 
@@ -41,19 +47,23 @@ public class FieldCanvas implements CanvasOperations {
         redrawCanvas();
     }
 
-    private void handleFieldRightClick(Vector2View<Integer> fieldPosition) {
-        field.removeTileAtXY(fieldPosition.x(), fieldPosition.y());
-        clearComponentTree();
+    private void handleFieldLeftClick(final Vector2View fieldPosition) {
+        if (field.getTileAtXY(fieldPosition.x(), fieldPosition.y()).isEmpty()) {
+            var properties = new TileProperties();
+            properties.getComponents().add(new FloorComponent());
+            var tile = new Tile(fieldPosition, properties);
+            field.addTileAtXY(fieldPosition.x(), fieldPosition.y(), tile);
+            CustomEventBus.getInstance().fireEvent(new TileEvent(tile, TileEvent.TILE_ADDED));
+        }
+        selectTileAtXY(field.getTileAtXY(fieldPosition.x(), fieldPosition.y()).get());
     }
 
-    private void clearComponentTree() {
-    }
+    private void handleFieldRightClick(Vector2View fieldPosition) {
+        field.getTileAtXY(fieldPosition.x(), fieldPosition.y()).ifPresent(tile -> {
+            field.removeTileAtXY(fieldPosition.x(), fieldPosition.y());
+            CustomEventBus.getInstance().fireEvent(new TileEvent(tile, TileEvent.TILE_REMOVED));
+        });
 
-    @Override
-    public void handleOnMouseOver(MouseEvent mouseEvent) {
-        redrawCanvas();
-        describeTileUnderCursor(mouseEvent);
-        paintCursor(mouseEvent);
     }
 
     private void redrawCanvas() {
@@ -61,28 +71,19 @@ public class FieldCanvas implements CanvasOperations {
         drawTiles();
     }
 
-    private void handleFieldLeftClick(final Vector2View<Integer> fieldPosition) {
-        if (field.getTileAtXY(fieldPosition.x(), fieldPosition.y()).isEmpty()) {
-            var properties = new TileProperties();
-            properties.getComponents().add(new FloorComponent());
-            field.addTileAtXY(fieldPosition.x(), fieldPosition.y(), properties);
-        }
-        selectTileAtXY(field.getTileAtXY(fieldPosition.x(), fieldPosition.y()).get());
-    }
-
     private void drawTiles() {
         field.getTiles().forEach(this::paintTile);
     }
 
-    private void paintTile(Tile<Integer> integerTile) {
-        var gc = controller.getSceneCanvas().getGraphicsContext2D();
+    private void paintTile(Tile integerTile) {
+        var gc = getGraphicsContext2D();
         gc.setFill(Color.GREENYELLOW);
         var fieldPosition = integerTile.position();
         gc.fillRect(fieldPosition.x() * Config.TILE_SIZE, fieldPosition.y() * Config.TILE_SIZE, Config.TILE_SIZE, Config.TILE_SIZE);
     }
 
     private void drawGrid() {
-        var sceneCanvas = controller.getSceneCanvas();
+        var sceneCanvas = this;
         var gc = sceneCanvas.getGraphicsContext2D();
         gc.clearRect(0, 0, sceneCanvas.getWidth(), sceneCanvas.getHeight());
         gc.setStroke(Color.LIGHTGRAY);
@@ -98,15 +99,15 @@ public class FieldCanvas implements CanvasOperations {
     }
 
     private void describeTileUnderCursor(MouseEvent mouseEvent) {
-        var tilePositionTextField = controller.getTilePositionTextField();
-        var fieldPosition = mouseToFieldPosition(mouseEvent.getX(), mouseEvent.getY());
+        //var tilePositionTextField = controller.getTilePositionTextField();
+        /*var fieldPosition = mouseToFieldPosition(mouseEvent.getX(), mouseEvent.getY());
 
         field.getTileAtXY(fieldPosition.x(), fieldPosition.y())
-                .ifPresentOrElse(tile -> tilePositionTextField.setText(String.format("%s, %s", fieldPosition.x(), fieldPosition.y())), () -> tilePositionTextField.setText(""));
+                .ifPresentOrElse(tile -> tilePositionTextField.setText(String.format("%s, %s", fieldPosition.x(), fieldPosition.y())), () -> tilePositionTextField.setText(""));*/
     }
 
     private void paintCursor(MouseEvent mouseEvent) {
-        var sceneCanvas = controller.getSceneCanvas();
+        var sceneCanvas = this;
         var gc = sceneCanvas.getGraphicsContext2D();
         gc.setFill(Color.GREENYELLOW);
         gc.setStroke(Color.GREENYELLOW);
@@ -116,12 +117,12 @@ public class FieldCanvas implements CanvasOperations {
         gc.setLineWidth(1);
     }
 
-    private Vector2View<Integer> mouseToFieldPosition(double mouseX, double mouseY) {
-        return new Vector2View<>((int) (mouseX / Config.TILE_SIZE), (int) (mouseY / Config.TILE_SIZE));
+    private Vector2View mouseToFieldPosition(double mouseX, double mouseY) {
+        return new Vector2View((int) (mouseX / Config.TILE_SIZE), (int) (mouseY / Config.TILE_SIZE));
     }
 
-    private void selectTileAtXY(Tile<Integer> tile) {
-        // TODO implement event handling, eg. 'TileSelectedEvent'
-        controller.getComponentTreeOperations().showComponentsOf(tile);
+    private void selectTileAtXY(Tile tile) {
+        CustomEventBus.getInstance().fireEvent(new TileEvent(tile, TileEvent.TILE_SELECTED));
     }
+
 }

@@ -1,6 +1,6 @@
 package com.kingdom.kingdomofthewormeditor.model;
 
-public record Tile<T>(Vector2View<T> position, TileProperties properties) {
+public record Tile(Vector2View position, TileProperties properties) {
 
     @Override
     public String toString() {

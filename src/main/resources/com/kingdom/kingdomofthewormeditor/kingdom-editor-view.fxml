@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.layout.*?>
-<BorderPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.kingdom.kingdomofthewormeditor.MainController">
+<?import com.kingdom.kingdomofthewormeditor.views.impl.ComponentTree?>
+<?import com.kingdom.kingdomofthewormeditor.views.impl.FieldCanvas?>
+<BorderPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.kingdom.kingdomofthewormeditor.controller.MainController">
    <left>
        <AnchorPane prefHeight="800.0" prefWidth="181.0" BorderPane.alignment="CENTER" />
    </left>
    <right>
        <AnchorPane prefHeight="800" prefWidth="418.0" BorderPane.alignment="CENTER">
            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-               <TreeView fx:id="componentTree" layoutX="42.0" layoutY="133.0" prefHeight="335.0" prefWidth="310.0"/>
+               <ComponentTree fx:id="componentTree" layoutX="42.0" layoutY="133.0" prefHeight="335.0" prefWidth="310.0"/>
            </AnchorPane>
        </AnchorPane>
    </right>
@@ -40,13 +41,13 @@
            <TextField fx:id="tilePositionTextField" prefHeight="51.0" prefWidth="309.0"/>
            <Separator prefWidth="200.0"/>
            <AnchorPane>
-               <Canvas fx:id="sceneCanvas" layoutX="20" layoutY="20" nodeOrientation="INHERIT"
-                       onMouseClicked="#handleCanvasOnMouseClicked" onMouseEntered="#handleCanvasOnMouseOver"
-                       onMouseMoved="#handleCanvasOnMouseOver" BorderPane.alignment="CENTER">
+               <FieldCanvas fx:id="fieldCanvas" layoutX="20" layoutY="20" nodeOrientation="INHERIT"
+                            onMouseClicked="#handleCanvasOnMouseClicked" onMouseEntered="#handleCanvasOnMouseOver"
+                            onMouseMoved="#handleCanvasOnMouseOver" BorderPane.alignment="CENTER">
                    <cursor>
                        <Cursor fx:constant="CROSSHAIR"/>
                    </cursor>
-               </Canvas>
+               </FieldCanvas>
            </AnchorPane>
        </VBox>
    </center>

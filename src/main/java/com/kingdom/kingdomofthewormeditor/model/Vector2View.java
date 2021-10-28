@@ -1,6 +1,6 @@
 package com.kingdom.kingdomofthewormeditor.model;
 
-public record Vector2View<T>(T x, T y) {
+public record Vector2View(int x, int y) {
 
     @Override
     public String toString() {

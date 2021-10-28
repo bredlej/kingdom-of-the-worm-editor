@@ -2,35 +2,36 @@ package com.kingdom.kingdomofthewormeditor.model;
 
 import java.util.*;
 
-public class Field<T> implements FieldOperations<T> {
+public class Field implements FieldOperations {
 
-    private final Map<Integer, Tile<T>> tiles;
+    private final Map<Integer, Tile> tiles;
 
     public Field() {
         tiles = new HashMap<>();
     }
 
     @Override
-    public Optional<Tile<T>> getTileAtXY(T x, T y) {
-        Tile<T> tile = tiles.get(Objects.hash(x, y));
+    public Optional<Tile> getTileAtXY(int x, int y) {
+        Tile tile = tiles.get(Objects.hash(x, y));
         return tile != null ? Optional.of(tile) : Optional.empty();
     }
 
     @Override
-    public void addTileAtXY(T x, T y, TileProperties properties) {
-        tiles.put(Objects.hash(x, y), new Tile<>(new Vector2View<>(x, y), properties));
-    }
-
-    public void addTileAtXY(T x, T y) {
-        addTileAtXY(x, y, new TileProperties());
+    public void addTileAtXY(int x, int y, TileProperties properties) {
+        tiles.put(Objects.hash(x, y), new Tile(new Vector2View(x, y), properties));
     }
 
     @Override
-    public void removeTileAtXY(T x, T y) {
+    public void addTileAtXY(int x, int y, Tile tile) {
+        tiles.put(Objects.hash(x, y), tile);
+    }
+
+    @Override
+    public void removeTileAtXY(int x, int y) {
         tiles.remove(Objects.hash(x, y));
     }
 
-    public Collection<Tile<T>> getTiles() {
+    public Collection<Tile> getTiles() {
         return tiles.values();
     }
 }
